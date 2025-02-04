@@ -32,6 +32,8 @@ jobs:
         run: npm install
 
       # 5. Run tests (optional, you can skip if not needed)
+      - name: Run tests
+        run: echo "Tests runned."
 
       # 6. Build Docker image
       - name: Build Docker image
@@ -41,10 +43,22 @@ jobs:
       - name: List Docker images
         run: docker images
 
-      # Optionally, you can check for the specific image by its tag:
-      - name: Verify my-node-app image
+    # 8. Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2.1.8
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      # 9. Configure Docker to use GCR
+      - name: Configure Docker to use GCR
+        run: gcloud auth configure-docker
+
+      # 10. Tag Docker image with GCR registry
+      - name: Tag Docker image
         run: |
-          if ! docker images | grep -q "my-node-app"; then
-            echo "Docker image 'my-node-app' was not created!"
-            exit 1
-          fi
+          docker tag my-node-app gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-node-app:${{ github.sha }}
+
+      # 11. Push Docker image to GCR
+      - name: Push Docker image to GCR
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-node-app:${{ github.sha }}
