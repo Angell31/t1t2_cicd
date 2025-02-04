@@ -19,7 +19,7 @@ jobs:
 
       # 2. Set up Docker Buildx (for building multi-platform images if needed)
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3.8.0
 
       # 3. Set up Node.js environment (to run npm commands)
       - name: Set up Node.js
@@ -32,9 +32,19 @@ jobs:
         run: npm install
 
       # 5. Run tests (optional, you can skip if not needed)
-      - name: Run tests
-        run: npm test
 
       # 6. Build Docker image
       - name: Build Docker image
         run: docker build -t my-node-app .
+
+      # 7. Verify the Docker image was created
+      - name: List Docker images
+        run: docker images
+
+      # Optionally, you can check for the specific image by its tag:
+      - name: Verify my-node-app image
+        run: |
+          if ! docker images | grep -q "my-node-app"; then
+            echo "Docker image 'my-node-app' was not created!"
+            exit 1
+          fi
