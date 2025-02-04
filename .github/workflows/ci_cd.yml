@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 2. Set up Docker Buildx (for building multi-platform images if needed)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # 3. Set up Node.js environment (to run npm commands)
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      # 4. Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 5. Run tests (optional, you can skip if not needed)
+      - name: Run tests
+        run: npm test
+
+      # 6. Build Docker image
+      - name: Build Docker image
+        run: docker build -t my-node-app .
