@@ -52,14 +52,14 @@ jobs:
 
       # 9. Configure Docker to use GCR
       - name: Configure Docker to use GCR
-        run: gcloud auth configure-docker
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
       # 10. Tag Docker image with GCR registry
       - name: Tag Docker image
         run: |
-          docker tag my-node-app gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-node-app:${{ github.sha }}
+          docker tag my-node-app us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
 
       # 11. Push Docker image to GCR
       - name: Push Docker image to GCR
         run: |
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-node-app:${{ github.sha }}
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
