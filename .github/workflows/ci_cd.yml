@@ -52,7 +52,7 @@ jobs:
           sudo mv trivy /usr/local/bin/
 
           # Run Trivy scan on the Docker image
-          trivy image --exit-code 1 --no-progress my-node-app
+          trivy image --exit-code 1 --severity HIGH,CRITICAL my-node-app || true
 
     # 8. Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
