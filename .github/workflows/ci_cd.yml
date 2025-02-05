@@ -74,12 +74,12 @@ jobs:
         run: |
           docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
 
-      # 13. Install Google Cloud SDK
-      - name: Install Google Cloud SDK
+      # 13. Install Google Cloud SDK (alternative method)
+      - name: Install Google Cloud SDK (alternative)
         run: |
           echo "Installing Google Cloud SDK"
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-          curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg > /dev/null
+          curl -sSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /etc/apt/trusted.gpg.d/google.asc
+          echo "deb [signed-by=/etc/apt/trusted.gpg.d/google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
           sudo apt-get update -y
           sudo apt-get install -y google-cloud-sdk
 
@@ -96,5 +96,4 @@ jobs:
       # 16. Deploy Docker image to GKE
       - name: Deploy to GKE
         run: |
-            kubectl set image deployment/my-deployment my-container=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
-            kubectl rollout status deployment/my-deployment
+            kubectl set image deployment/my-deployment my-container=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/g
