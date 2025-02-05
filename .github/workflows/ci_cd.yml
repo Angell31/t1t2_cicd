@@ -94,6 +94,8 @@ jobs:
             gcloud container clusters get-credentials my-cluster --zone us-central1-c --project ${{ secrets.GCP_PROJECT_ID }}
 
       # 16. Deploy Docker image to GKE
-      - name: Deploy to GKE
+      # 14. Apply Kubernetes Deployment
+      - name: Apply Kubernetes Deployment
         run: |
-            kubectl set image deployment/my-deployment my-container=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/g
+          kubectl apply -f ../../../kubernetes/deployment.yaml  # Or the correct path to your deployment.yaml
+          kubectl rollout status deployment/my-deployment
