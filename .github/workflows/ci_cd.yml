@@ -74,18 +74,24 @@ jobs:
         run: |
           docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
 
-      # 13. Install GKE Authentication Plugin via apt-get
+      # 13. Install the Google Cloud SDK
+      - name: Install Google Cloud SDK
+        run: |
+          echo "Installing Google Cloud SDK"
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+
+      # 14. Install the GKE Authentication Plugin
       - name: Install GKE Authentication Plugin
         run: |
-          sudo apt-get update
-          sudo apt-get install google-cloud-cli-gke-gcloud-auth-plugin
+          sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
 
-      # 14. Configure kubectl to interact with GKE
+      # 15. Configure kubectl to interact with GKE
       - name: Configure kubectl to interact with GKE
         run: |
             gcloud container clusters get-credentials my-cluster --zone us-central1-c --project ${{ secrets.GCP_PROJECT_ID }}
 
-      # 15. Deploy Docker image to GKE
+      # 16. Deploy Docker image to GKE
       - name: Deploy to GKE
         run: |
             kubectl set image deployment/my-deployment my-container=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
