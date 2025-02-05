@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: my-container
-        image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
+        image: us-central1-docker.pkg.dev/innate-legacy-449121-a5/github-actions-repo/my_node_app:v1
         ports:
         - containerPort: 3030

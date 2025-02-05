@@ -67,12 +67,12 @@ jobs:
       # 11. Tag Docker image with GCR registry
       - name: Tag Docker image
         run: |
-          docker tag my-node-app us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
+          docker tag my-node-app us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:v1
 
       # 12. Push Docker image to GCR
       - name: Push Docker image to GCR
         run: |
-          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:v1
 
       # 13. Install Google Cloud SDK (alternative method)
       - name: Install Google Cloud SDK (alternative)
