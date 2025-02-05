@@ -74,10 +74,11 @@ jobs:
         run: |
           docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
 
-      # 13. Install gke-gcloud-auth-plugin
+      # 13. Install GKE Authentication Plugin via apt-get
       - name: Install GKE Authentication Plugin
         run: |
-          gcloud components install gke-gcloud-auth-plugin
+          sudo apt-get update
+          sudo apt-get install google-cloud-cli-gke-gcloud-auth-plugin
 
       # 14. Configure kubectl to interact with GKE
       - name: Configure kubectl to interact with GKE
