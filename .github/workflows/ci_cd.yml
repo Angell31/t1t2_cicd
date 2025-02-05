@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch: 
+  workflow_dispatch:
 
 jobs:
   build:
@@ -44,7 +44,7 @@ jobs:
       - name: List Docker images
         run: docker images
 
-      # 7. Security scan with Trivy
+      # 8. Security scan with Trivy
       - name: Scan Docker image with Trivy for vulnerabilities
         run: |
           # Install Trivy
@@ -54,32 +54,37 @@ jobs:
           # Run Trivy scan on the Docker image
           trivy image --exit-code 1 --severity HIGH,CRITICAL my-node-app || true
 
-    # 8. Authenticate to Google Cloud
+      # 9. Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2.1.8
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      # 9. Configure Docker to use GCR
+      # 10. Configure Docker to use GCR
       - name: Configure Docker to use GCR
         run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
-      # 10. Tag Docker image with GCR registry
+      # 11. Tag Docker image with GCR registry
       - name: Tag Docker image
         run: |
           docker tag my-node-app us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
 
-      # 11. Push Docker image to GCR
+      # 12. Push Docker image to GCR
       - name: Push Docker image to GCR
         run: |
           docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
 
-    # 13. Configure kubectl to interact with GKE cluster
+      # 13. Install gke-gcloud-auth-plugin
+      - name: Install GKE Authentication Plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin
+
+      # 14. Configure kubectl to interact with GKE
       - name: Configure kubectl to interact with GKE
         run: |
             gcloud container clusters get-credentials my-cluster --zone us-central1-c --project ${{ secrets.GCP_PROJECT_ID }}
 
-        # 14. Deploy Docker image to GKE
+      # 15. Deploy Docker image to GKE
       - name: Deploy to GKE
         run: |
             kubectl set image deployment/my-deployment my-container=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
