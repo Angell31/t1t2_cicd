@@ -73,3 +73,14 @@ jobs:
       - name: Push Docker image to GCR
         run: |
           docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
+
+    # 13. Configure kubectl to interact with GKE cluster
+      - name: Configure kubectl to interact with GKE
+        run: |
+            gcloud container clusters get-credentials my-cluster --zone us-central1-a --project ${{ secrets.GCP_PROJECT_ID }}
+
+        # 14. Deploy Docker image to GKE
+      - name: Deploy to GKE
+        run: |
+            kubectl set image deployment/my-deployment my-container=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
+            kubectl rollout status deployment/my-deployment
