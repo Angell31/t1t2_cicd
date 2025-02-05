@@ -74,7 +74,7 @@ jobs:
         run: |
           docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:${{ github.sha }}
 
-      # 13. Install the Google Cloud SDK
+      # 13. Install Google Cloud SDK
       - name: Install Google Cloud SDK
         run: |
           echo "Installing Google Cloud SDK"
