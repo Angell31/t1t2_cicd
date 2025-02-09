@@ -91,7 +91,7 @@ jobs:
       # 15. Configure kubectl to interact with GKE
       - name: Configure kubectl to interact with GKE
         run: |
-            gcloud container clusters get-credentials my-cluster --zone us-central1-c --project ${{ secrets.GCP_PROJECT_ID }}
+            gcloud container clusters get-credentials my-cluster --zone us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
 
       # 16. Deploy Docker image to GKE
       # 14. Apply Kubernetes Deployment
