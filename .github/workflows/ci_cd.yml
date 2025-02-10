@@ -14,37 +14,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # 2. Set up Docker Buildx (for building multi-platform images if needed)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
 
-      # 3. Set up Node.js environment (to run npm commands)
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '16'
 
-      # 4. Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # 5. Run tests (optional, you can skip if not needed)
       - name: Run tests
         run: echo "Tests runned."
 
-      # 6. Build Docker image
       - name: Build Docker image
         run: docker build -t my-node-app .
 
-      # 7. Verify the Docker image was created
-      - name: List Docker images
-        run: docker images
-
-      # 8. Security scan with Trivy
       - name: Scan Docker image with Trivy for vulnerabilities
         run: |
           # Install Trivy
@@ -54,27 +43,22 @@ jobs:
           # Run Trivy scan on the Docker image
           trivy image --exit-code 1 --severity HIGH,CRITICAL my-node-app || true
 
-      # 9. Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2.1.8
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      # 10. Configure Docker to use GCR
       - name: Configure Docker to use GCR
         run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
-      # 11. Tag Docker image with GCR registry
       - name: Tag Docker image
         run: |
           docker tag my-node-app us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:v1
 
-      # 12. Push Docker image to GCR
       - name: Push Docker image to GCR
         run: |
           docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/github-actions-repo/my_node_app:v1
 
-      # 13. Install Google Cloud SDK (alternative method)
       - name: Install Google Cloud SDK (alternative)
         run: |
           echo "Installing Google Cloud SDK"
@@ -83,18 +67,14 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y google-cloud-sdk
 
-      # 14. Install the GKE Authentication Plugin
       - name: Install GKE Authentication Plugin
         run: |
           sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
 
-      # 15. Configure kubectl to interact with GKE
       - name: Configure kubectl to interact with GKE
         run: |
             gcloud container clusters get-credentials my-cluster --zone us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
 
-      # 16. Deploy Docker image to GKE
-      # 14. Apply Kubernetes Deployment
       - name: Apply Kubernetes Deployment
         run: |
           kubectl apply -f kubernetes/deployment.yaml  # Or the correct path to your deployment.yaml
